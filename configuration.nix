@@ -109,4 +109,35 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
+
+  # === Nextcloud ===
+  services.nextcloud = {
+    enable = true;
+    package = pkgs.nextcloud30;
+    hostName = "home-server";
+
+    # Let NixOS install and configure the database automatically.
+    database.createLocally = true;
+
+    # Let NixOS install and configure Redis caching automatically.
+    configureRedis = true;
+
+    maxUploadSize = "2G";
+
+    extraAppsEnable = true;
+    extraApps = with config.services.nextcloud.package.packages.apps; {
+      # List of apps we want to install and are already packaged in
+      # https://github.com/NixOS/nixpkgs/blob/master/pkgs/servers/nextcloud/packages/nextcloud-apps.json
+      inherit calendar contacts cookbook notes tasks;
+    };
+    autoUpdateApps.enable = true;
+
+    config = {
+      dbtype = "mysql";
+      adminuser = "admin";
+      adminpassFile = "/etc/nextcloud-admin-pass";
+    };
+  };
+
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
 }
