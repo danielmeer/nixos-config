@@ -110,6 +110,19 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
 
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+
+    # Automatically import host SSH key as age key
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+
+    # Secrets will be accessible in /run/secrets/
+    secrets.nextcloud-admin = {
+      # Should be user "nextcloud"
+      owner = config.services.nextcloud.config.dbuser;
+    };
+  };
+
   # === Nextcloud ===
   services.nextcloud = {
     enable = true;
@@ -135,7 +148,7 @@
     config = {
       dbtype = "mysql";
       adminuser = "admin";
-      adminpassFile = "/etc/nextcloud-admin-pass";
+      adminpassFile = config.sops.secrets.nextcloud-admin.path;
     };
   };
 

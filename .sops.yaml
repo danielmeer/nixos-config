@@ -1,0 +1,11 @@
+keys:
+  - users:
+    - &daniel age1r7m6nt0cp920rxm0n9ema9zu57243reumm22lagw8jeks7n7gg5qupge6z
+  - hosts:
+    - &home-server age1rj0t85jg7hk720m4mv376mwp9mup2rnznezkf8vv0eua0z5ssftswqcm73
+creation_rules:
+  - path_regex: secrets.yaml$
+    key_groups:
+    - age:
+      - *daniel
+      - *home-server

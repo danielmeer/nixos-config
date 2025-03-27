@@ -20,6 +20,7 @@
     fzf
     nnn
     ripgrep
+    sops
     tig
     tree
   ];
