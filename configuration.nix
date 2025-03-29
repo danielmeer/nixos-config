@@ -82,6 +82,12 @@
     };
   };
 
+  # Enable Tailscale
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
+  };
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
