@@ -25,6 +25,29 @@
     tree
   ];
 
+  programs.bash = {
+    enable = true;
+    # Setting fish as the default shell may cause issues because it is not POSIX
+    # compliant. A workaround is to switch automatically any login shell from
+    # bash to fish. The snippet below is from the Arch wiki:
+    #   https://wiki.archlinux.org/title/Fish#Modify_.bashrc_to_drop_into_fish
+    initExtra = ''
+      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} && ''${SHLVL} == 1 ]]; then
+        shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+        exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
+      fi
+    '';
+  };
+
+  programs.fish = {
+    enable = true;
+    shellAliases = {
+      ls = "ls --color=auto --group-directories-first";
+      g = "git status";
+      t = "tig --all";
+    };
+  };
+
   programs.git = {
     enable = true;
     userName = "Daniel Meer";

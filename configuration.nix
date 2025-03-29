@@ -63,6 +63,10 @@
     vim
   ];
 
+  # Fish configuration and plugins are managed in Home Manager, but we enable
+  # it here as well for fish completions provided by other system packages.
+  programs.fish.enable = true;
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
