@@ -133,7 +133,7 @@
   services.nextcloud = {
     enable = true;
     package = pkgs.nextcloud30;
-    hostName = "home-server";
+    hostName = "home-server.quetzal-mountain.ts.net";
 
     # Let NixOS install and configure the database automatically.
     database.createLocally = true;
