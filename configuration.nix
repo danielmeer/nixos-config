@@ -163,4 +163,26 @@
   };
 
   networking.firewall.allowedTCPPorts = [ 80 443 ];
+
+  # === Bitcoin ===
+  nix-bitcoin = {
+    # Automatically generate all secrets required by services.
+    # The secrets are stored in /etc/nix-bitcoin-secrets.
+    # Seems to be necessary for flakes.
+    generateSecrets = true;
+
+    # Enable interactive access to nix-bitcoin features (like bitcoin-cli) for the system's main user
+    operator = {
+      enable = true;
+      name = "daniel";
+    };
+    nodeinfo.enable = true;
+
+    # The nix-bitcoin release version that your config is compatible with.
+    # When upgrading to a backwards-incompatible release, nix-bitcoin will display an
+    # an error and provide instructions for migrating your config to the new release.
+    configVersion = "0.0.121";
+  };
+
+  services.bitcoind.enable = true;
 }

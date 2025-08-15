@@ -1,5 +1,49 @@
 {
   "nodes": {
+    "extra-container": {
+      "inputs": {
+        "flake-utils": [
+          "nix-bitcoin",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nix-bitcoin",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1734005403,
+        "narHash": "sha256-vgh3TqfkFdnPxREBedw4MQehIDc3N8YyxBOB45n+AvU=",
+        "owner": "erikarvstedt",
+        "repo": "extra-container",
+        "rev": "f4de6c329b306a9d3a9798a30e060c166f781baa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "erikarvstedt",
+        "ref": "0.13",
+        "repo": "extra-container",
+        "type": "github"
+      }
+    },
+    "flake-utils": {
+      "inputs": {
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -21,7 +65,61 @@
         "type": "github"
       }
     },
+    "nix-bitcoin": {
+      "inputs": {
+        "extra-container": "extra-container",
+        "flake-utils": "flake-utils",
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-unstable": "nixpkgs-unstable"
+      },
+      "locked": {
+        "lastModified": 1748187031,
+        "narHash": "sha256-F4zdOfeg0xjEnvFjlHvoMmdmh/FxK1qIsZyscnGDgA0=",
+        "owner": "fort-nix",
+        "repo": "nix-bitcoin",
+        "rev": "a06d1d8118865af14a9187e7d1a7a141dd89af74",
+        "type": "github"
+      },
+      "original": {
+        "owner": "fort-nix",
+        "ref": "nixos-24.11",
+        "repo": "nix-bitcoin",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
+      "locked": {
+        "lastModified": 1748037224,
+        "narHash": "sha256-92vihpZr6dwEMV6g98M5kHZIttrWahb9iRPBm1atcPk=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f09dede81861f3a83f7f06641ead34f02f37597f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-24.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-unstable": {
+      "locked": {
+        "lastModified": 1747958103,
+        "narHash": "sha256-qmmFCrfBwSHoWw7cVK4Aj+fns+c54EBP8cGqp/yK410=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "fe51d34885f7b5e3e7b59572796e1bcb427eccb1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
       "locked": {
         "lastModified": 1751274312,
         "narHash": "sha256-/bVBlRpECLVzjV19t5KMdMFWSwKLtb5RyXdjz3LJT+g=",
@@ -40,7 +138,8 @@
     "root": {
       "inputs": {
         "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs",
+        "nix-bitcoin": "nix-bitcoin",
+        "nixpkgs": "nixpkgs_2",
         "sops-nix": "sops-nix"
       }
     },
@@ -61,6 +160,21 @@
       "original": {
         "owner": "Mic92",
         "repo": "sops-nix",
+        "type": "github"
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
         "type": "github"
       }
     }

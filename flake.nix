@@ -12,9 +12,12 @@
     sops-nix.url = "github:Mic92/sops-nix";
     # Not necessary, but pins it to our nixpkgs release
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    # nix-bitcoin, for running a bitcoin and lightning node
+    nix-bitcoin.url = "github:fort-nix/nix-bitcoin/nixos-24.11";
   };
 
-  outputs = { self, nixpkgs, home-manager, sops-nix, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, sops-nix, nix-bitcoin, ... }@inputs: {
     nixosConfigurations.home-server = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -30,6 +33,8 @@
         }
 
 	sops-nix.nixosModules.sops
+
+	nix-bitcoin.nixosModules.default
       ];
     };
   };
