@@ -18,6 +18,7 @@
   home.packages = with pkgs; [
     fd
     fzf
+    lsof
     nnn
     ripgrep
     sops
