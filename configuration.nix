@@ -50,6 +50,16 @@
     packages = with pkgs; [];
   };
 
+  # Need to create a user/group for shared data with nextcloud container
+  users = {
+    users.nextcloud = {
+      isSystemUser = true;
+      uid = 2000;
+      group = "nextcloud";
+    };
+    groups.nextcloud.gid = 2000;
+  };
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -128,41 +138,92 @@
 
     # Secrets will be accessible in /run/secrets/
     secrets.nextcloud-admin = {
-      # Should be user "nextcloud"
-      owner = config.services.nextcloud.config.dbuser;
+      owner = "nextcloud";
     };
+  };
+
+  networking.nat = {
+    enable = true;
+    enableIPv6 = true;
+    # Use "ve-*" when using nftables instead of iptables
+    internalInterfaces = ["ve-+"];
+    externalInterface = "enp1s0";
   };
 
   # === Nextcloud ===
-  services.nextcloud = {
-    enable = true;
-    package = pkgs.nextcloud30;
-    hostName = "home-server.quetzal-mountain.ts.net";
+  containers.nextcloud = {
+    ephemeral = true;
+    autoStart = true;
+    privateNetwork = true;
+    hostAddress = "192.168.100.10";
+    localAddress = "192.168.100.11";
 
-    # Let NixOS install and configure the database automatically.
-    database.createLocally = true;
-
-    # Let NixOS install and configure Redis caching automatically.
-    configureRedis = true;
-
-    maxUploadSize = "2G";
-
-    extraAppsEnable = true;
-    extraApps = with config.services.nextcloud.package.packages.apps; {
-      # List of apps we want to install and are already packaged in
-      # https://github.com/NixOS/nixpkgs/blob/master/pkgs/servers/nextcloud/packages/nextcloud-apps.json
-      inherit calendar contacts cookbook notes tasks;
+    bindMounts = {
+      "${config.sops.secrets.nextcloud-admin.path}" = {
+        isReadOnly = true;
+      };
+      "/var/lib/nextcloud/config" = {
+        hostPath = "/data/nextcloud/config";
+        isReadOnly = false;
+      };
+      "/var/lib/nextcloud/data" = {
+        hostPath = "/data/nextcloud/data";
+        isReadOnly = false;
+      };
+      "/var/lib/mysql" = {
+        hostPath = "/data/nextcloud/mysql";
+        isReadOnly = false;
+      };
+      "/var/lib/tailscale" = {
+        hostPath = "/data/nextcloud/tailscale";
+        isReadOnly = false;
+      };
     };
-    autoUpdateApps.enable = true;
 
-    config = {
-      dbtype = "mysql";
-      adminuser = "admin";
-      adminpassFile = config.sops.secrets.nextcloud-admin.path;
+    config = { config, pkgs, lib, ... }: with lib; {
+      # Match host UID/GID (necessary for bind mounts)
+      users = {
+        users.nextcloud.uid = 2000;
+        groups.nextcloud.gid = 2000;
+      };
+
+      services.nextcloud = {
+        enable = true;
+        package = pkgs.nextcloud30;
+        hostName = "nextcloud.quetzal-mountain.ts.net";
+
+        # Let NixOS install and configure the database automatically.
+        database.createLocally = true;
+
+        # Let NixOS install and configure Redis caching automatically.
+        configureRedis = true;
+
+        maxUploadSize = "2G";
+
+        extraAppsEnable = true;
+        extraApps = with config.services.nextcloud.package.packages.apps; {
+          # List of apps we want to install and are already packaged in
+          # https://github.com/NixOS/nixpkgs/blob/master/pkgs/servers/nextcloud/packages/nextcloud-apps.json
+          inherit calendar contacts cookbook notes tasks;
+        };
+        autoUpdateApps.enable = true;
+
+        config = {
+          dbtype = "mysql";
+          adminuser = "admin";
+          adminpassFile = "/run/secrets/nextcloud-admin"; # config.sops.secrets.nextcloud-admin.path;
+        };
+      };
+
+      services.tailscale = {
+        enable = true;
+        interfaceName = "userspace-networking";
+        openFirewall = true;
+      };
+
+      system.stateVersion = "24.11";
     };
   };
-
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
 
   # === Bitcoin ===
   nix-bitcoin = {
