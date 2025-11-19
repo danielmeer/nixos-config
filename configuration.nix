@@ -189,7 +189,7 @@
 
       services.nextcloud = {
         enable = true;
-        package = pkgs.nextcloud30;
+        package = pkgs.nextcloud31;
         hostName = "nextcloud.quetzal-mountain.ts.net";
 
         # Let NixOS install and configure the database automatically.
