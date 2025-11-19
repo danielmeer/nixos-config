@@ -2,10 +2,10 @@
   description = "A NixOS flake for my home server";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
 
     # home-manager, used for managing user configuration
-    home-manager.url = "github:nix-community/home-manager/release-24.11";
+    home-manager.url = "github:nix-community/home-manager/release-25.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # Atomic secret provisioning for NixOS based on sops
@@ -14,7 +14,7 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     # nix-bitcoin, for running a bitcoin and lightning node
-    nix-bitcoin.url = "github:fort-nix/nix-bitcoin/nixos-24.11";
+    nix-bitcoin.url = "github:fort-nix/nix-bitcoin/nixos-25.05";
   };
 
   outputs = { self, nixpkgs, home-manager, sops-nix, nix-bitcoin, ... }@inputs: {
