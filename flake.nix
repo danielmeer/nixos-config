@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     # home-manager, used for managing user configuration
     home-manager.url = "github:nix-community/home-manager/release-25.05";
@@ -17,25 +18,32 @@
     nix-bitcoin.url = "github:fort-nix/nix-bitcoin/nixos-25.05";
   };
 
-  outputs = { self, nixpkgs, home-manager, sops-nix, nix-bitcoin, ... }@inputs: {
-    nixosConfigurations.home-server = nixpkgs.lib.nixosSystem {
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, sops-nix, nix-bitcoin, ... }@inputs:
+    let
       system = "x86_64-linux";
-      modules = [
-        ./configuration.nix
+      pkgs-unstable = import nixpkgs-unstable {
+        inherit system;
+        config.allowUnfree = true;
+      };
+    in {
+      nixosConfigurations.home-server = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit pkgs-unstable; };
+        modules = [
+          ./configuration.nix
 
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.daniel = import ./home.nix;
-          # Optionally, use home-manager.extraSpecialArgs to pass
-          # arguments to home.nix
-        }
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit pkgs-unstable; };
+            home-manager.users.daniel = import ./home.nix;
+          }
 
-	sops-nix.nixosModules.sops
+          sops-nix.nixosModules.sops
 
-	nix-bitcoin.nixosModules.default
-      ];
+          nix-bitcoin.nixosModules.default
+        ];
+      };
     };
-  };
 }
