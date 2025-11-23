@@ -50,7 +50,7 @@
     packages = with pkgs; [];
   };
 
-  # Need to create a user/group for shared data with nextcloud container
+  # Need to create users/groups for shared data with containers
   users = {
     users.nextcloud = {
       isSystemUser = true;
@@ -58,6 +58,13 @@
       group = "nextcloud";
     };
     groups.nextcloud.gid = 2000;
+
+    users.albyhub = {
+      isSystemUser = true;
+      uid = 2010;
+      group = "albyhub";
+    };
+    groups.albyhub.gid = 2010;
   };
 
   # Allow unfree packages
@@ -250,5 +257,74 @@
     # Use Bitcoin Knots instead of Bitcoin Core
     # package = config.nix-bitcoin.pkgs.bitcoind-knots;
     package = pkgs.bitcoind-knots; # Above package has a library issue, use stable version for the moment
+  };
+
+  # === Alby Hub ===
+  containers.albyhub = {
+    ephemeral = true;
+    autoStart = true;
+    privateNetwork = true;
+    hostAddress = "192.168.100.20";
+    localAddress = "192.168.100.21";
+
+    bindMounts = {
+      "/var/lib/albyhub" = {
+        hostPath = "/data/albyhub/data";
+        isReadOnly = false;
+      };
+      "/var/lib/tailscale" = {
+        hostPath = "/data/albyhub/tailscale";
+        isReadOnly = false;
+      };
+    };
+
+    config = { config, pkgs, lib, ... }: with lib; {
+      # Match host UID/GID (necessary for bind mounts)
+      users = {
+        users.albyhub = {
+          isSystemUser = true;
+          uid = 2010;
+          group = "albyhub";
+        };
+        groups.albyhub.gid = 2010;
+      };
+
+      environment.systemPackages = [ pkgs-unstable.albyhub ];
+
+      systemd.services.albyhub = {
+        description = "Alby Hub";
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
+        serviceConfig = {
+          Type = "simple";
+          Restart = "always";
+          RestartSec = 1;
+          User = "albyhub";
+          ExecStart = "${pkgs-unstable.albyhub}/bin/albyhub";
+          Environment = [
+            "PORT=8029"
+            "WORK_DIR=/var/lib/albyhub"
+          ];
+        };
+        wantedBy = [ "multi-user.target" ];
+      };
+
+      services.caddy = {
+        enable = true;
+        virtualHosts."http://albyhub.quetzal-mountain.ts.net" = {
+          extraConfig = ''
+            reverse_proxy 127.0.0.1:8029
+          '';
+        };
+      };
+
+      services.tailscale = {
+        enable = true;
+        interfaceName = "userspace-networking";
+        openFirewall = true;
+      };
+
+      system.stateVersion = "25.05";
+    };
   };
 }
