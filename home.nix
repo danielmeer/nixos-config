@@ -51,9 +51,11 @@
 
   programs.git = {
     enable = true;
-    userName = "Daniel Meer";
-    userEmail = "meerdan2@gmail.com";
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Daniel Meer";
+        email = "meerdan2@gmail.com";
+      };
       pull.rebase = "true";
     };
   };
