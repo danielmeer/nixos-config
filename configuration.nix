@@ -254,9 +254,6 @@
 
   services.bitcoind = {
     enable = true;
-    # Use Bitcoin Knots instead of Bitcoin Core
-    # package = config.nix-bitcoin.pkgs.bitcoind-knots;
-    package = pkgs.bitcoind-knots; # Above package has a library issue, use stable version for the moment
   };
 
   # === Alby Hub ===
