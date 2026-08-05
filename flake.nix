@@ -15,7 +15,7 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     # nix-bitcoin, for running a bitcoin and lightning node
-    nix-bitcoin.url = "github:fort-nix/nix-bitcoin/nixos-25.05";
+    nix-bitcoin.url = "github:fort-nix/nix-bitcoin/release";
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, sops-nix, nix-bitcoin, ... }@inputs:
